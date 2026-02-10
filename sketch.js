@@ -31,6 +31,9 @@ let li = 0;
 // Player instance (tile-based).
 let player;
 
+let obstaclesByLevel = [];
+let wordsByLevel = [];
+
 function preload() {
   // Ensure level data is ready before setup runs.
   levelsData = loadJSON("levels.json");
@@ -42,6 +45,9 @@ function setup() {
   levelsData.levels is an array of 2D arrays. 
   */
   levels = levelsData.levels.map((grid) => new Level(copyGrid(grid), TS));
+
+  obstaclesByLevel = levelsData.levels.map((lvl) => lvl.obstacles || []);
+  wordsByLevel = levelsData.levels.map((lvl) => lvl.words || []);
 
   // Create a player.
   player = new Player(TS);
@@ -59,6 +65,11 @@ function draw() {
 
   // Draw current level then player on top.
   levels[li].draw();
+
+  drawObstacles(obstaclesByLevel[li]);
+
+  drawWords(wordsByLevel[li]);
+
   player.draw();
 
   drawHUD();
@@ -68,6 +79,39 @@ function drawHUD() {
   // HUD matches your original idea: show level count and controls.
   fill(0);
   text(`Level ${li + 1}/${levels.length} — WASD/Arrows to move`, 10, 16);
+}
+
+function drawObstacles(obstacles) {
+  const level = levels[li];
+
+  fill(200, 80, 80);
+  for (let i = 0; i < obstacles.length; i++) {
+    const o = obstacles[i];
+
+    // only draw if inside bounds and not a wall tile
+    if (level.inBounds(o.r, o.c) && !level.isWall(o.r, o.c)) {
+      rect(o.c * TS, o.r * TS, TS, TS);
+    }
+  }
+}
+
+function drawWords(words) {
+  const level = levels[li];
+
+  fill(0);
+  textSize(12);
+  textAlign(LEFT, CENTER);
+
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
+
+    // only draw if inside bounds and not a wall tile
+    if (level.inBounds(w.r, w.c) && !level.isWall(w.r, w.c)) {
+      const x = w.c * TS + TS * 0.15; // padding so it reads cleanly
+      const y = w.r * TS + TS / 2;
+      text(w.text, x, y);
+    }
+  }
 }
 
 function keyPressed() {

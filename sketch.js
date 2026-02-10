@@ -42,9 +42,11 @@ function preload() {
 function setup() {
   /*
   Convert raw JSON grids into Level objects.
-  levelsData.levels is an array of 2D arrays. 
+  levelsData.levels is an array of objects. 
   */
-  levels = levelsData.levels.map((grid) => new Level(copyGrid(grid), TS));
+  levels = levelsData.levels.map(
+    (lvlObject) => new Level(copyGrid(lvlObject.grid), TS),
+  );
 
   obstaclesByLevel = levelsData.levels.map((lvl) => lvl.obstacles || []);
   wordsByLevel = levelsData.levels.map((lvl) => lvl.words || []);
@@ -131,7 +133,7 @@ function keyPressed() {
   else return; // not a movement key
 
   // Try to move. If blocked, nothing happens.
-  const moved = player.tryMove(levels[li], dr, dc);
+  const moved = player.tryMove(levels[li], dr, dc, obstaclesByLevel[li]);
 
   // If the player moved onto a goal tile, advance levels.
   if (moved && levels[li].isGoal(player.r, player.c)) {

@@ -41,7 +41,7 @@ class Player {
   }
 
   draw() {
-    // Same "simple high-contrast avatar" idea as your original. 
+    // Same "simple high-contrast avatar" idea as your original.
     fill(20, 120, 255);
     circle(this.pixelX(), this.pixelY(), this.ts * 0.6);
   }
@@ -52,12 +52,13 @@ class Player {
   Inputs:
   - level: a Level instance, used for bounds + wall collision + goal detection
   - dr/dc: desired movement step, typically -1,0,1
+  - obstacles: array of obstacle positions {r, c}
 
   Returns:
   - true if the move happened
   - false if blocked or throttled
   */
-  tryMove(level, dr, dc) {
+  tryMove(level, dr, dc, obstacles) {
     // Throttle discrete movement using millis()
     const now = millis();
     if (now - this.movedAt < this.moveDelay) return false;
@@ -70,6 +71,13 @@ class Player {
 
     // Prevent walking into walls.
     if (level.isWall(nr, nc)) return false;
+
+    // Prevent walking into obstacles.
+    for (let i = 0; i < obstacles.length; i++) {
+      if (obstacles[i].r === nr && obstacles[i].c === nc) {
+        return false;
+      }
+    }
 
     // Movement is allowed, so commit.
     this.r = nr;

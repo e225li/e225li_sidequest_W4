@@ -55,6 +55,9 @@ function setup() {
   // Load the first level (sets player start + canvas size).
   loadLevel(0);
 
+  // Initialize canvas for p5
+  createCanvas(levels[0].pixelWidth(), levels[0].pixelHeight());
+
   noStroke();
   textFont("sans-serif");
   textSize(14);

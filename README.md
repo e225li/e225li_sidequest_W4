@@ -26,9 +26,6 @@ Learning Goals:
 - Builds Level objects
 - Creates/positions the Player
 - Handles input + level switching
-
-It is intentionally light on "details" because those are moved into:
-
 - Level.js (grid + drawing + tile meaning)
 - Player.js (position + movement rules)
 
